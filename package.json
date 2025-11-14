@@ -1,0 +1,42 @@
+{
+  "name": "sheild-api-server",
+  "version": "1.0.0",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "nodemon -r dotenv/config ./src/app.ts",
+    "dev": "nodemon -r dotenv/config ./src/app.ts",
+    "build": "tsc -p ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "axios": "^1.8.3",
+    "body-parser": "^1.20.3",
+    "build": "^0.1.4",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^4.21.0",
+    "express-rate-limit": "^7.5.0",
+    "joi": "^17.13.3",
+    "mongodb": "^6.9.0",
+    "mongoose": "^8.7.0",
+    "node-cron": "^3.0.3",
+    "run": "^1.5.0",
+    "uuid": "^10.0.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/joi": "^17.2.3",
+    "@types/node": "^22.7.4",
+    "@types/node-cron": "^3.0.11",
+    "@types/uuid": "^10.0.0",
+    "install": "^0.13.0",
+    "nodemon": "^3.1.7",
+    "npm": "^10.9.0",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0"
+  }
+}
