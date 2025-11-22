@@ -1,4 +1,6 @@
 import express from "express";
+import ChatRouter from "./chat.route";
+
 
 
 const router= express.Router();
@@ -11,7 +13,7 @@ const router= express.Router();
 
 // public routes
 // ###############################################
-router.use("/chat",)
+router.use("/chat",ChatRouter)
 
 // private routes
 // ###############################################

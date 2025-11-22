@@ -1,10 +1,11 @@
-import express, { Request, Response } from "express";
+import express, { Request, Response, NextFunction } from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import bodyParser from "body-parser";
 import env from "@/environment";
 import utils from "@/utils";
 import router from "./routes";
+import { globalErrorHandler } from "@/error/globalErrorHandler";
 
 
 dotenv.config();
@@ -31,7 +32,7 @@ app.use('/v1',router)
 
 // 404 handler - must be after all other routes
 // ####################################
-app.use((req: Request, res: Response) => {
+app.use((req: Request, res: Response, next: NextFunction) => {
     res.status(utils.HttpStatusCodes.NOT_FOUND).json({
         success: false,
         message: 'Route not found',
@@ -42,6 +43,10 @@ app.use((req: Request, res: Response) => {
         }
     });
 });
+
+// Global error handler - must be after all routes and middleware
+// ####################################
+app.use(globalErrorHandler);
 
 // Start the server
 app.listen(env.PORT, () => {

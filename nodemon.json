@@ -4,7 +4,7 @@
     "src"
   ],
   "ext": "ts,js,json",
-  "exec": "ts-node -r dotenv/config ./src/app.ts",
+  "exec": "ts-node -r tsconfig-paths/register -r dotenv/config ./src/app.ts",
   "ignore": [
     "src/**/*.spec.ts"
   ]
