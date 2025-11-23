@@ -2,19 +2,12 @@
 import env from "@/environment";
 import OpenAI from "openai";
 
-interface Message {
-  role: "system" | "user" | "assistant";
-  content: string;
-}
-
-interface ChatResponse {
-  content: string;
-  sessionId: string;
-}
+import { IMessage } from "@/interface/request/chat.request";
+import { IChatResponse } from "@/interface/response/chat.response";
 
 class ChatService {
   private client: OpenAI;
-  private sessions = new Map<string, Message[]>();
+  private sessions = new Map<string, IMessage[]>();
   private readonly MAX_HISTORY = 10;
 
   constructor() {
@@ -25,7 +18,7 @@ class ChatService {
   }
 
   /** Get or create session memory */
-  private getSession(sessionId: string): Message[] {
+  private getSession(sessionId: string): IMessage[] {
     if (!this.sessions.has(sessionId)) {
       this.sessions.set(sessionId, []);
     }
@@ -33,7 +26,7 @@ class ChatService {
   }
 
   /** Add message to memory */
-  private addMessage(sessionId: string, msg: Message) {
+  private addMessage(sessionId: string, msg: IMessage) {
     const mem = this.getSession(sessionId);
     mem.push(msg);
 
@@ -43,7 +36,7 @@ class ChatService {
   }
 
   /** Main chat function (non-streaming) */
-  public async chat(sessionId: string, userMessage: string, thinking?: boolean): Promise<ChatResponse> {
+  public async chat(sessionId: string, userMessage: string, thinking?: boolean): Promise<IChatResponse> {
     // Save user message
     this.addMessage(sessionId, { role: "user", content: userMessage });
 
