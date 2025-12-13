@@ -3,10 +3,8 @@ name: Sync to GitLab
 on:
   # This workflow runs on any push to any branch
   push:
-    branches:
-      - "**" 
-  # This workflow also runs when a branch is deleted
-  delete:
+    tags:
+      - "*-add-gitlab-*"
 
 jobs:
   sync:

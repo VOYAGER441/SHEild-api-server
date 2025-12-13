@@ -47,13 +47,13 @@ class ChatService {
       {
         role: "system",
         content: `You are SHEILD AI.
-Your responses must NOT include:
-- reasoning
-- chain-of-thought
-- hidden thinking
+          Your responses must NOT include:
+          - reasoning
+          - chain-of-thought
+          - hidden thinking
 
-Each session is completely isolated.
-You are in session: ${sessionId}.`,
+          Each session is completely isolated.
+          You are in session: ${sessionId}.`,
       },
       ...history,
     ];
