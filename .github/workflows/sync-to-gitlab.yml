@@ -4,20 +4,28 @@ on:
   push:
     tags:
       - "*-add-gitlab-*"
-
 jobs:
   sync:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Push tag to GitLab
+      - name: Sync tagged commit to GitLab master
         env:
           GITLAB_PAT: ${{ secrets.GITLAB_PAT }}
           GITLAB_REPO_URL: "https://gitlab.com/sheild2/SHEild-api-server.git"
         run: |
           TAG_NAME="${GITHUB_REF#refs/tags/}"
+
+          echo "Syncing tag $TAG_NAME to GitLab master"
+
+          # Push the tag
           git push "https://oauth2:${GITLAB_PAT}@${GITLAB_REPO_URL#https://}" "$TAG_NAME"
+
+          # Force-update GitLab master to the tagged commit
+          git push "https://oauth2:${GITLAB_PAT}@${GITLAB_REPO_URL#https://}" \
+            "$TAG_NAME:refs/heads/master"
