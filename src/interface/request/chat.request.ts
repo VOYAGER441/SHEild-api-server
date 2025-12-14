@@ -1,4 +1,5 @@
+import { AIModelRole } from "@/utils/appConstant";
 export interface IMessage {
-  role: "system" | "user" | "assistant";
+  role: AIModelRole;
   content: string;
 }

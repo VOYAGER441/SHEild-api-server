@@ -6,6 +6,7 @@ import env from "@/environment";
 import utils from "@/utils";
 import router from "./routes";
 import { globalErrorHandler } from "@/error/globalErrorHandler";
+import { Log } from "./utils/logger";
 
 
 dotenv.config();
@@ -17,23 +18,23 @@ app.use(bodyParser.json());
 // public routes
 // ####################################
 app.get('/', async (req: Request, res: Response) => {
-     // Remove unused parameter warning by using req or underscore prefix
-     // This prevents the unused parameter warning
-     res.status(utils.HttpStatusCodes.OK).send("Hello World")
+    // Remove unused parameter warning by using req or underscore prefix
+    // This prevents the unused parameter warning
+    res.status(utils.http.HttpStatusCodes.OK).send("Hello World")
 })
 
 
 
 
-// api routes
+// api routes entry point
 // ####################################
-app.use('/v1',router)
+app.use('/v1', router)
 // ####################################
 
 // 404 handler - must be after all other routes
 // ####################################
 app.use((req: Request, res: Response, next: NextFunction) => {
-    res.status(utils.HttpStatusCodes.NOT_FOUND).json({
+    res.status(utils.http.HttpStatusCodes.NOT_FOUND).json({
         success: false,
         message: 'Route not found',
         error: {
@@ -50,5 +51,5 @@ app.use(globalErrorHandler);
 
 // Start the server
 app.listen(env.PORT, () => {
-     console.log(`Server is running on port ${env.PORT}`);
+    Log.info(`Server is running on port ${env.PORT}`);
 })

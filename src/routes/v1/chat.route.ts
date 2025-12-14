@@ -5,7 +5,7 @@ const router = express.Router();
 
 // for chat 
 // ###############################################
-router.post("/", apiErrorHandler(ChatController.chat));
-router.get("/clear", apiErrorHandler(ChatController.clear));
+router.post("/", apiErrorHandler(ChatController.chatService));
+router.get("/clear", apiErrorHandler(ChatController.clearChatSession));
 
 export default router;
