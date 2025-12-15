@@ -1,9 +1,12 @@
 // ####################### chat ########################
 // ai model role and context prompt
+export const MAX_HISTORY = 10
+
+
 export enum AIModelRole {
-    USER = "user",
-    ASSISTANT = "assistant",
-    SYSTEM = "system",
+   USER = "user",
+   ASSISTANT = "assistant",
+   SYSTEM = "system",
 }
 
 export const SHEILD_AI_SYSTEM_PROMPT = `You are SHEILD AI, a specialized virtual assistant dedicated to women's safety and empowerment. Your primary mission is to provide accurate, helpful, and empathetic information regarding women's legal rights, safety tips, self-defense techniques, and general well-being.

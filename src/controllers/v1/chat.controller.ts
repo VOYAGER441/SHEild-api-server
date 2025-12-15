@@ -3,16 +3,24 @@ import { AppError } from "@/error/AppError";
 import ChatService from "@/services/chat.service";
 import { Log } from "@/utils/logger";
 import utils from "@/utils";
+import { IChatRequest } from "@/interface/request/chat.request";
+import validations from "@/validations";
 
 class ChatController {
     async chatService(req: Request, res: Response) {
         Log.info("ChatController:::chatService:::: this is chat controller")
-        const { sessionId } = req.params;
-        const { message, thinking } = req.body;
-        Log.debug("ChatController:::chatService:::: sessionId message thinking", sessionId, message, thinking)
+
+        const requestBody: IChatRequest = req.body;
+        Log.debug("ChatController:::chatService:::: sessionId message thinking", requestBody.sessionId, requestBody.message, requestBody.thinking)
+
+        const { error } = validations.chatBotValidation.chatRequestSchema.validate(requestBody);
+        if (error) {
+            Log.error("ChatController:::chatService:::: error", error)
+            throw new AppError(error.details[0].message, utils.http.HttpStatusCodes.BAD_REQUEST);
+        }
 
         try {
-            const result = await ChatService.chatService(sessionId, message, thinking);
+            const result = await ChatService.chatService(requestBody.sessionId, requestBody.message, requestBody.thinking);
 
             Log.debug("ChatController:::chatService:::: result", result)
             return res.status(utils.http.HttpStatusCodes.OK).json(result);
@@ -26,6 +34,12 @@ class ChatController {
         Log.info("ChatController:::clearChatSession:::: this is clear chat session controller")
         const { sessionId } = req.params;
         Log.debug("ChatController:::clearChatSession:::: sessionId", sessionId)
+
+        const { error } = validations.chatBotValidation.chatClearSchema.validate({ sessionId });
+        if (error) {
+            Log.error("ChatController:::clearChatSession:::: error", error)
+            throw new AppError(error.details[0].message, utils.http.HttpStatusCodes.BAD_REQUEST);
+        }
 
         try {
 

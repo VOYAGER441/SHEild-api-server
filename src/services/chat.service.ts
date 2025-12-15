@@ -10,7 +10,7 @@ import utils from "@/utils";
 class ChatService {
   private client: OpenAI;
   private sessions = new Map<string, IMessage[]>();
-  private readonly MAX_HISTORY = 10;
+  private readonly MAX_HISTORY = utils.appConstant.MAX_HISTORY;
 
   constructor() {
     this.client = new OpenAI({
@@ -55,6 +55,7 @@ class ChatService {
       } as any
     );
 
+    Log.debug("ChatService:::chatService:::: response", response)
     // Extract message safely
     const finalText =
       response?.choices?.[0]?.message?.content ||
@@ -83,7 +84,8 @@ class ChatService {
     }
 
     const finalTextSanitized = safeText;
-    // ####################################################
+
+    Log.debug("ChatService:::chatService:::: finalTextSanitized", finalTextSanitized);
 
     // Save assistant message
     this._addMessage(sessionId, { role: utils.appConstant.AIModelRole.ASSISTANT, content: finalTextSanitized });
@@ -94,18 +96,23 @@ class ChatService {
     };
   }
 
+
+  /** Get session history */
   public async getHistory(sessionId: string) {
     return this._getSession(sessionId);
   }
 
+  /** Clear session */
   public async clearSession(sessionId: string) {
     this.sessions.delete(sessionId);
   }
 
+  /** Clear all sessions */
   public async clearAllSessions() {
     this.sessions.clear();
   }
 
+  /** Get session count */
   public async getSessionCount() {
     return this.sessions.size;
   }
