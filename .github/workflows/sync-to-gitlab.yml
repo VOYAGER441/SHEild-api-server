@@ -14,7 +14,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Sync tagged commit to GitLab master
+      - name: Sync tagged commit to GitLab master SHEild node-js app
         env:
           GITLAB_PAT: ${{ secrets.GITLAB_PAT }}
           GITLAB_REPO_URL: "https://gitlab.com/sheild2/SHEild-api-server.git"
