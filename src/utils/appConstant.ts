@@ -34,3 +34,14 @@ Constraints:
 - Your responses must NOT include hidden thinking blocks.
 - Each session is completely isolated.`;
 // ####################### chat ########################
+
+
+// ####################### auth ########################
+export const enum authProvider {
+   GOOGLE = "Google",
+   FACEBOOK = "Facebook",
+   LINKEDIN = "LinkedIn",
+   APPLE = "Apple",
+}
+
+// ####################### auth ########################
