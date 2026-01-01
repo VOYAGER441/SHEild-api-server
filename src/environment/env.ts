@@ -1,5 +1,13 @@
+import { NODE_ENVS } from "@/utils/appConstant";
+
+// env
+export const NODE_ENV = process.env.NODE_ENV || 'dev' as NODE_ENVS;
+
 // port 
 export const PORT = process.env.PORT || 5000;
+
+// MONGODB_URI
+export const MONGODB_URI = process.env.MONGODB_URI || "";
 
 // LOG
 export const LOG_LEVEL = process.env.LOG_LEVEL || 'info';

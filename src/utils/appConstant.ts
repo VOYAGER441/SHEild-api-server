@@ -1,3 +1,19 @@
+// ####################### server ########################
+export enum NODE_ENVS {
+   DEV = "dev",
+   STG = "stg",
+   PROD = "prod"
+}
+
+
+// ####################### user ########################
+export enum USER_ROLE {
+   ADMIN = "admin",
+   USER = "user",
+}
+
+
+
 // ####################### chat ########################
 // ai model role and context prompt
 export const MAX_HISTORY = 10
@@ -33,7 +49,6 @@ Tone & Style:
 Constraints:
 - Your responses must NOT include hidden thinking blocks.
 - Each session is completely isolated.`;
-// ####################### chat ########################
 
 
 // ####################### auth ########################
@@ -44,4 +59,3 @@ export const enum authProvider {
    APPLE = "Apple",
 }
 
-// ####################### auth ########################
