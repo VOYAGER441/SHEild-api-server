@@ -14,7 +14,10 @@ export const LOG_LEVEL = process.env.LOG_LEVEL || 'info';
 export const LOG_OUTPUT = process.env.LOG_OUTPUT || 'console';
 export const LOG_FILE_PATH = process.env.LOG_FILE_PATH || 'logs/app.log';
 
-
+// APPWRITE
+export const APPWRITE_ENDPOINT = process.env.APPWRITE_ENDPOINT;
+export const APPWRITE_PROJECT_ID = process.env.APPWRITE_PROJECT_ID;
+export const APPWRITE_API_KEY = process.env.APPWRITE_API_KEY;
 
 // NVIDIA API key
 export const NVIDIA_API_KEY = process.env.NVIDIA_API_KEY;

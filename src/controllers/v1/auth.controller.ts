@@ -16,7 +16,7 @@ class AuthController {
             Log.error("AuthController:::jwtVerify:::: need Appwrite JWT validation", error)
             throw new AppError(error.details[0].message, utils.http.HttpStatusCodes.BAD_REQUEST);
         }
-        const result = await authService.jwtVerify();
+        const result = await authService.jwtVerify(jwtFromAppwrite);
         res.status(utils.http.HttpStatusCodes.OK).json(result);
     }
 
