@@ -4,6 +4,7 @@ import * as commonUnit from "./commonUnit";
 import * as cacheConstant from "./cacheConstant";
 import * as appConstant from "./appConstant";
 import { SafetyCheck } from "./safety";
+import * as jwtOperation from "./jwtOperation";
 
 export default {
   http,
@@ -11,4 +12,5 @@ export default {
   cacheConstant,
   appConstant,
   SafetyCheck,
+  jwtOperation,
 };

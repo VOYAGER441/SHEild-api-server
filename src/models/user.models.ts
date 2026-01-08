@@ -6,14 +6,15 @@ import utils from "@/utils";
 
 export interface IUser {
     _id: mongoose.Types.ObjectId;
-    userName: string
-    email: string
-    avatarUrl: string
-    role: string
-    isActive: boolean
-    isDeleted: boolean
-    createdAt: Date
-    updatedAt: Date
+    userName: string;
+    appwriteId: string;
+    email: string;
+    avatarUrl: string;
+    role: string;
+    isActive: boolean;
+    isDeleted: boolean;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 const userSchema = new mongoose.Schema({

@@ -1,5 +1,6 @@
 export interface IUserResponse {
     id: string;
+    appwriteId: string;
     userName: string
     email: string
     avatarUrl: string

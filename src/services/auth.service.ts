@@ -6,6 +6,8 @@ import { AppError } from "@/error/AppError";
 import utils from "@/utils";
 import { IAppWriteAccountResponse } from "@/interface/response/appwrite.response";
 import userService from "./user.service";
+import { IUserCreateRequest } from "@/interface/request/user.request";
+import { IJwtRequest, IJwtResponse } from "@/interface/request/jwt.request";
 class AuthService {
     async jwtVerify(appwriteToken: string) {
         // check the JWT validity with Appwrite
@@ -26,15 +28,41 @@ class AuthService {
         const data: IAppWriteAccountResponse = appwriteUser;
 
         // if user is not registered then create user
-        const user = await userService.getUserByAppwriteId(data.$id);
+        let user = await userService.getUserByAppwriteId(data.$id);
 
         if (!user) {
             // create user
-            const user = await userService.createUser(data);
+
+            // convert the dataset into db dataset
+            const userCreateRequestDataSet: IUserCreateRequest = {
+                appwriteId: data.$id,
+                email: data.email,
+                name: data.name,
+                emailVerification: data.emailVerification,
+                prefs: data.prefs
+            }
+
+            // create user in DB 
+            user = await userService.createUser(userCreateRequestDataSet);
         }
 
+        const jwtRequest: IJwtRequest = {
+            userId: user.id,
+            email: user.email,
+            role: user.role
+        }
+
+        // now create access token and refresh token
+        const accessToken = utils.jwtOperation.generateAccessToken(jwtRequest);
+        const refreshToken = utils.jwtOperation.generateRefreshToken(jwtRequest);
 
 
+        const jwtResponse: IJwtResponse = {
+            accessToken: accessToken,
+            refreshToken: refreshToken
+        }
+
+        return jwtResponse;
     }
 
     async logout() {

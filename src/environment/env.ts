@@ -1,5 +1,6 @@
 import { NODE_ENVS } from "@/utils/appConstant";
 
+
 // env
 export const NODE_ENV = process.env.NODE_ENV || 'dev' as NODE_ENVS;
 
@@ -26,3 +27,8 @@ export const BASE_URL = process.env.BASE_URL;
 export const TEMPERATURE = Number(process.env.TEMPERATURE) || 0.2;
 export const TOP_P = Number(process.env.TOP_P) || 0.7;
 export const MAX_TOKENS = Number(process.env.MAX_TOKENS) || 2048;
+
+// jwt
+export const JWT_SECRET = process.env.JWT_SECRET || "default_secret_key";
+export const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "7d";
+export const JWT_REFRESH_EXPIRES_IN = process.env.JWT_REFRESH_EXPIRES_IN || "30d";
