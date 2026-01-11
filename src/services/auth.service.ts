@@ -17,6 +17,7 @@ class AuthService {
         // check user token is valid or not from appwrite
         let appwriteUser: IAppWriteAccountResponse;
         try {
+            Log.info(`AuthService:::jwtVerify:::: verifying appwrite token`);
             const { account } = await appwriteService.createSessionClient(appwriteToken);
             appwriteUser = await account.get();
         } catch (appwriteError) {
@@ -32,6 +33,7 @@ class AuthService {
 
         if (!user) {
             // create user
+            Log.info(`AuthService:::jwtVerify:::: user not found, creating user with appwriteId: ${data.$id}`);
 
             // convert the dataset into db dataset
             const userCreateRequestDataSet: IUserCreateRequest = {
@@ -44,6 +46,9 @@ class AuthService {
 
             // create user in DB 
             user = await userService.createUser(userCreateRequestDataSet);
+            Log.info(`AuthService:::jwtVerify:::: user created successfully with id: ${user.id}`);
+        } else {
+            Log.info(`AuthService:::jwtVerify:::: user found with id: ${user.id}`);
         }
 
         const jwtRequest: IJwtRequest = {
@@ -56,6 +61,7 @@ class AuthService {
         const accessToken = utils.jwtOperation.generateAccessToken(jwtRequest);
         const refreshToken = utils.jwtOperation.generateRefreshToken(jwtRequest);
 
+        Log.info(`AuthService:::jwtVerify:::: JWT tokens generated successfully for user: ${user.id}`);
 
         const jwtResponse: IJwtResponse = {
             accessToken: accessToken,
