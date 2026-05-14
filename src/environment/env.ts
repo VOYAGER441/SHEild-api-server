@@ -1,5 +1,7 @@
 import { NODE_ENVS } from "@/utils/appConstant";
 
+// app url
+export const APP_URL = process.env.APP_URL;
 
 // env
 export const NODE_ENV = process.env.NODE_ENV || 'dev' as NODE_ENVS;

@@ -16,10 +16,13 @@ export default class DATABASE {
     if (mongoose.connection.readyState != 1) {
       if (env.NODE_ENV == utils.appConstant.NODE_ENVS.DEV)
         Log.info("😎 connecting to the DATABASE... 🤘");
-      await mongoose.connect(env.MONGODB_URI)
-        .catch(err => {
-          Log.error("MongoDB connection error:", err);
-        });
+      if (!env.MONGODB_URI) {
+        throw new Error("MONGODB_URI is not configured");
+      }
+      await mongoose.connect(env.MONGODB_URI).catch((err) => {
+        Log.error("MongoDB connection error:", err);
+        throw err;
+      });
     }
     this.connection = mongoose.connection;
   }

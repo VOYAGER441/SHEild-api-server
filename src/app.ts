@@ -7,6 +7,7 @@ import utils from "@/utils";
 import router from "./routes";
 import { globalErrorHandler } from "@/error/globalErrorHandler";
 import { Log } from "./utils/logger";
+import DATABASE from "@/database/database";
 
 
 dotenv.config();
@@ -49,7 +50,16 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 // ####################################
 app.use(globalErrorHandler);
 
-// Start the server
-app.listen(env.PORT, () => {
-    Log.info(`Server is running on port ${env.PORT}`);
-})
+const startServer = async () => {
+    const database = new DATABASE();
+    await database.init();
+
+    app.listen(env.PORT, () => {
+        Log.info(`Server is running on port ${env.PORT}`);
+    });
+};
+
+startServer().catch((error) => {
+    Log.error("Failed to start server:", error);
+    process.exit(1);
+});

@@ -15,6 +15,21 @@ router.post("/jwtVerify/:jwtFromAppwrite", apiErrorHandler(AuthController.jwtVer
 
 /**
  * @openapi
+ * /auth/googleLogin
+ * google login
+ */
+router.get("/googleLogin", apiErrorHandler(AuthController.googleLogin));
+
+/**
+ * @openapi
+ * /auth/oauth/callback
+ * oauth callback
+ */
+router.get("/oauth/callback", apiErrorHandler(AuthController.oauthCallback));
+
+
+/**
+ * @openapi
  * /auth/logout
  * user logout
  */
