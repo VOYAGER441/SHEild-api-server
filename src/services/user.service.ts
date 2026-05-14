@@ -1,6 +1,7 @@
 import { IUserCreateRequest } from "@/interface/request/user.request";
 import { IUserResponse } from "@/interface/response/user.response";
 import userModels from "@/models/user.models";
+import utils from "@/utils";
 import { Log } from "@/utils/logger";
 
 
@@ -28,7 +29,8 @@ class UserService {
             return avatarFromPrefs.trim();
         }
 
-        return `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=0D8ABC&color=fff`;
+        // return `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=0D8ABC&color=fff`;
+
     }
 
     // get user by appwrite id
@@ -44,7 +46,8 @@ class UserService {
         Log.info(`UserService:::createUser:::: creating user for appwriteId ${data.appwriteId}`);
 
         const userName = this.buildFallbackUserName(data);
-        const avatarUrl = this.buildAvatarUrl(userName, data.prefs);
+        // const avatarUrl = this.buildAvatarUrl(userName, data.prefs);
+        const avatarUrl = utils.commonUnit.generateAvatarUrl(userName);
 
         const user = await userModels.create({
             appwriteId: data.appwriteId,
