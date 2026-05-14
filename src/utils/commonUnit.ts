@@ -20,3 +20,10 @@ export const generateUUID = () => {
     generatedIds.add(id);
     return id;
 };
+
+
+export function generateAvatarUrl(name: string): string {
+    const url = `https://api.dicebear.com/9.x/lorelei/svg?seed=${name}`;
+
+    return url;
+}
