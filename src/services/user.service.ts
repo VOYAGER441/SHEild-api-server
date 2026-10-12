@@ -41,6 +41,13 @@ class UserService {
         return user;
     }
 
+    // get user by email
+    async getUserByEmail(email: string): Promise<IUserResponse | null> {
+        Log.info(`UserService:::getUserByEmail:::: email ${email}`);
+        const user = await userModels.findOne({ email });
+        return user;
+    }
+
     // create user
     async createUser(data: IUserCreateRequest): Promise<IUserResponse> {
         Log.info(`UserService:::createUser:::: creating user for appwriteId ${data.appwriteId}`);

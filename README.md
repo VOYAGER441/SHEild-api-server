@@ -122,6 +122,50 @@ POST /v1/auth/jwtVerify/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 }
 ```
 
+#### Google Native Sign-In
+Exchanges a Google ID token for the custom backend session token. This is the
+primary mobile login: no browser redirect, and the frontend never creates an
+Appwrite session.
+
+- **Endpoint**: `POST /v1/auth/google/native`
+- **Description**: The app obtains an ID token from Google Credential Manager
+  (Android) or Sign in with Google and posts it here. The backend forwards it to
+  Appwrite's native sign-in endpoint, which verifies the Google signature, the
+  audience (the configured web client ID) and expiry, then applies the same
+  account matching/identity linking as OAuth2 login. The backend loads the
+  resolved Appwrite user, syncs MongoDB and returns its own access/refresh JWT
+  pair. Rate limited to 20 requests per 15 minutes per IP.
+
+**Request:**
+```http
+POST /v1/auth/google/native
+Content-Type: application/json
+
+{ "idToken": "<google_id_token>" }
+```
+
+**Example Response (Success):**
+```json
+{
+  "accessToken": "eyJhbGciOiJIUzI1NiIsIn...",
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsIn..."
+}
+```
+
+**Errors:**
+
+| Status | Meaning |
+| ------ | ------- |
+| `400`  | Missing or malformed `idToken` |
+| `401`  | Appwrite rejected the token (`user_oauth2_token_invalid` — audience mismatch, expired, bad signature, missing nonce) |
+| `429`  | Too many sign-in attempts |
+| `500`  | Native sign-in is not enabled for the Google provider in the Appwrite Console |
+| `503`  | Appwrite unreachable, or the instance does not expose the native sign-in endpoint |
+
+**Required configuration:** Appwrite Console → **Auth** → **Social providers** →
+**Google** → enable **Native sign-in** and add the Google **Web application**
+client ID under *Web client IDs*. No client secret and no callback URL are needed.
+
 ## Project Structure
 
 The project follows a standard Express MVC architecture:

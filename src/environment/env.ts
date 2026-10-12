@@ -31,6 +31,19 @@ export const TOP_P = Number(process.env.TOP_P) || 0.7;
 export const MAX_TOKENS = Number(process.env.MAX_TOKENS) || 2048;
 
 // jwt
-export const JWT_SECRET = process.env.JWT_SECRET || "default_secret_key";
+const jwtSecret = process.env.JWT_SECRET?.trim();
+const isProductionEnv = String(NODE_ENV).toLowerCase() === "production" || String(NODE_ENV).toLowerCase() === "prod";
+
+// Never serve traffic signed with a publicly known key.
+if (isProductionEnv && !jwtSecret) {
+    throw new Error(
+        "JWT_SECRET is required when NODE_ENV is production. Refusing to start with the default signing key. " +
+        "Set JWT_SECRET in the environment before starting the server."
+    );
+}
+
+export const JWT_SECRET = jwtSecret || "default_secret_key";
+// flagged so startup can warn loudly when running on the insecure fallback
+export const JWT_SECRET_IS_FALLBACK = !jwtSecret;
 export const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "7d";
 export const JWT_REFRESH_EXPIRES_IN = process.env.JWT_REFRESH_EXPIRES_IN || "30d";

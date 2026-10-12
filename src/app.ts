@@ -51,6 +51,13 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 app.use(globalErrorHandler);
 
 const startServer = async () => {
+    if (env.JWT_SECRET_IS_FALLBACK) {
+        Log.warn(
+            "App:::startServer:::: JWT_SECRET is not set - using the insecure development default. " +
+            "Set a strong JWT_SECRET before running this server anywhere outside local development."
+        );
+    }
+
     const database = new DATABASE();
     await database.init();
 

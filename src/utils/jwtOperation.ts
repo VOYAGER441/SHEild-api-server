@@ -15,3 +15,27 @@ export function generateRefreshToken(user: IJwtRequest) {
         expiresIn: env.JWT_REFRESH_EXPIRES_IN as SignOptions["expiresIn"]
     });
 }
+
+export interface IAccessClaims {
+    user?: IJwtRequest;
+    type?: string;
+    iat?: number;
+    exp?: number;
+}
+
+// verify a backend access token; returns null instead of throwing
+export function verifyAccessToken(token: string): IAccessClaims | null {
+    try {
+        const decoded = jwt.verify(token, env.JWT_SECRET);
+        if (typeof decoded === "string") {
+            return null;
+        }
+        const claims = decoded as IAccessClaims;
+        if (claims.type !== "access" || !claims.user?.userId) {
+            return null;
+        }
+        return claims;
+    } catch (verifyError) {
+        return null;
+    }
+}
