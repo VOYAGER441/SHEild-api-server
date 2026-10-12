@@ -15,54 +15,45 @@ class UserService {
         const emailPrefix = data.email?.split("@")[0]?.trim();
         if (emailPrefix) return emailPrefix;
 
-        return `user-${data.appwriteId.slice(-6)}`;
+        return `user-${data.googleId.slice(-6)}`;
     }
 
-    private buildAvatarUrl(userName: string, prefs: any): string {
-        const avatarFromPrefs =
-            prefs?.avatarUrl ||
-            prefs?.avatar ||
-            prefs?.profilePhoto ||
-            prefs?.image;
-
-        if (typeof avatarFromPrefs === "string" && avatarFromPrefs.trim()) {
-            return avatarFromPrefs.trim();
-        }
-
-        // return `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=0D8ABC&color=fff`;
-
-    }
-
-    // get user by appwrite id
-    async getUserByAppwriteId(appwriteId: string): Promise<IUserResponse | null> {
-        Log.info(`UserService:::getUserByAppwriteId:::: appwriteId ${appwriteId}`);
-        const user = await userModels.findOne({ appwriteId });
-        Log.info(`UserService:::getUserByAppwriteId:::: user ${user}`);
+    // get user by google id (the `sub` claim of a verified Google ID token)
+    async getUserByGoogleId(googleId: string): Promise<IUserResponse | null> {
+        Log.info(`UserService:::getUserByGoogleId:::: googleId ${googleId}`);
+        const user = await userModels.findOne({ googleId });
         return user;
     }
 
     // get user by email
     async getUserByEmail(email: string): Promise<IUserResponse | null> {
         Log.info(`UserService:::getUserByEmail:::: email ${email}`);
-        const user = await userModels.findOne({ email });
+        const user = await userModels.findOne({ email: email?.toLowerCase?.() || email });
         return user;
+    }
+
+    // attach a google id to an existing user (e.g. matched by email on first native sign-in)
+    async linkGoogleId(userId: string, googleId: string): Promise<void> {
+        Log.info(`UserService:::linkGoogleId:::: linking googleId ${googleId} to user ${userId}`);
+        await userModels.update(userId, { googleId, updatedAt: new Date() });
     }
 
     // create user
     async createUser(data: IUserCreateRequest): Promise<IUserResponse> {
-        Log.info(`UserService:::createUser:::: creating user for appwriteId ${data.appwriteId}`);
+        Log.info(`UserService:::createUser:::: creating user for googleId ${data.googleId}`);
 
         const userName = this.buildFallbackUserName(data);
-        // const avatarUrl = this.buildAvatarUrl(userName, data.prefs);
-        const avatarUrl = utils.commonUnit.generateAvatarUrl(userName);
+        const avatarUrl =
+            (typeof data.avatarUrl === "string" && data.avatarUrl.trim()) ||
+            utils.commonUnit.generateAvatarUrl(userName);
 
         const user = await userModels.create({
-            appwriteId: data.appwriteId,
-            email: data.email,
+            googleId: data.googleId,
+            email: data.email?.toLowerCase?.() || data.email,
             userName,
             avatarUrl,
         });
-        Log.info(`UserService:::createUser:::: user ${user}`);
+        Log.info(`UserService:::createUser:::: user created with id ${user?._id}`);
         return user;
     }
 }

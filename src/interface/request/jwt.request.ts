@@ -4,7 +4,16 @@ export interface IJwtRequest {
     role: string;
 }
 
+export interface IJwtUserPayload {
+    id: string;
+    email: string;
+    name: string;
+    avatarUrl?: string;
+    role?: string;
+}
+
 export interface IJwtResponse {
     accessToken: string;
     refreshToken: string;
+    user?: IJwtUserPayload;
 }

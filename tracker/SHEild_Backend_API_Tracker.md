@@ -1,8 +1,25 @@
 # SHEild Backend API Development Tracker
 
-> **Tech Stack:** Node.js + Express + Firebase (Auth + Firestore) + Firebase Admin SDK  
-> **Mobile App:** React Native Expo  
-> **Last Updated:** November 21, 2025
+> **Tech Stack:** Node.js + Express + MongoDB (Mongoose) + Google OAuth (google-auth-library) + custom JWTs  
+> **Mobile App:** React Native Expo (native Google Sign-In)  
+> **Last Updated:** October 13, 2026
+
+---
+
+## 🔁 Migration Log — Native Google Auth (branch: `feat/native-google-auth`)
+
+Replaced the Appwrite-based auth stack with direct Google ID-token verification.
+
+| Step | Change | Status |
+|------|--------|--------|
+| 1 | Add `google-auth-library`, remove `node-appwrite` | ✅ |
+| 2 | Env: `GOOGLE_CLIENT_ID_WEB/ANDROID/IOS`, `JWT_REFRESH_SECRET`; drop `APPWRITE_*` | ✅ |
+| 3 | User model: `googleId` (sparse unique) replaces `appwriteId`; email normalized | ✅ |
+| 4 | `jwtOperation`: refresh tokens signed with `JWT_REFRESH_SECRET` + `verifyRefreshToken` | ✅ |
+| 5 | `POST /v1/auth/google` (+ `/api/v1` mount alias, + legacy `/google/native`): verify → upsert (googleId → email link → create) → JWTs + user | ✅ |
+| 6 | Remove Appwrite service, OAuth browser flows (`googleLogin`, `oauth/callback`, `oauth/exchange`, `jwtVerify`) | ✅ |
+| 7 | Contract tests: fake idToken → **401**, malformed → **400**, both `/v1` and `/api/v1` prefixes OK | ✅ |
+| 8 | Follow-up (not in this branch): `POST /v1/auth/refresh` + rotation, then shorten `JWT_EXPIRES_IN` | ⬜ |
 
 ---
 

@@ -1,7 +1,6 @@
 export interface IUserCreateRequest {
-    appwriteId: string;
+    googleId: string;
     email: string;
     name: string;
-    emailVerification: boolean;
-    prefs: any;
+    avatarUrl?: string;
 }

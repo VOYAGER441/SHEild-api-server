@@ -29,7 +29,10 @@ app.get('/', async (req: Request, res: Response) => {
 
 // api routes entry point
 // ####################################
+// `/v1` is the canonical prefix; `/api/v1` is mounted as an alias so clients
+// can use the full `/api/v1/...` style without breaking existing callers.
 app.use('/v1', router)
+app.use('/api/v1', router)
 // ####################################
 
 // 404 handler - must be after all other routes

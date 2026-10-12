@@ -17,10 +17,18 @@ export const LOG_LEVEL = process.env.LOG_LEVEL || 'info';
 export const LOG_OUTPUT = process.env.LOG_OUTPUT || 'console';
 export const LOG_FILE_PATH = process.env.LOG_FILE_PATH || 'logs/app.log';
 
-// APPWRITE
-export const APPWRITE_ENDPOINT = process.env.APPWRITE_ENDPOINT;
-export const APPWRITE_PROJECT_ID = process.env.APPWRITE_PROJECT_ID;
-export const APPWRITE_API_KEY = process.env.APPWRITE_API_KEY;
+// GOOGLE OAUTH
+// Client IDs used as accepted audiences when verifying Google ID tokens.
+export const GOOGLE_CLIENT_ID_WEB = process.env.GOOGLE_CLIENT_ID_WEB;
+export const GOOGLE_CLIENT_ID_ANDROID = process.env.GOOGLE_CLIENT_ID_ANDROID;
+export const GOOGLE_CLIENT_ID_IOS = process.env.GOOGLE_CLIENT_ID_IOS;
+
+// Non-empty audience list handed to google-auth-library on every verification.
+export const GOOGLE_TOKEN_AUDIENCES: string[] = [
+    process.env.GOOGLE_CLIENT_ID_WEB,
+    process.env.GOOGLE_CLIENT_ID_ANDROID,
+    process.env.GOOGLE_CLIENT_ID_IOS,
+].filter((value): value is string => Boolean(value && value.trim()));
 
 // NVIDIA API key
 export const NVIDIA_API_KEY = process.env.NVIDIA_API_KEY;
@@ -45,5 +53,13 @@ if (isProductionEnv && !jwtSecret) {
 export const JWT_SECRET = jwtSecret || "default_secret_key";
 // flagged so startup can warn loudly when running on the insecure fallback
 export const JWT_SECRET_IS_FALLBACK = !jwtSecret;
+
+// Refresh tokens are signed with their own secret so a leaked access secret
+// cannot mint refresh tokens. Falls back to JWT_SECRET for backwards
+// compatibility with tokens issued before JWT_REFRESH_SECRET existed.
+const jwtRefreshSecret = process.env.JWT_REFRESH_SECRET?.trim();
+export const JWT_REFRESH_SECRET = jwtRefreshSecret || JWT_SECRET;
+export const JWT_REFRESH_SECRET_IS_FALLBACK = !jwtRefreshSecret;
+
 export const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "7d";
 export const JWT_REFRESH_EXPIRES_IN = process.env.JWT_REFRESH_EXPIRES_IN || "30d";
