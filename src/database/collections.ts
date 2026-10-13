@@ -1,5 +1,5 @@
 const USER_COLLECTION = "users";
-const AUTH_COLLECTION = "auths";
+const AUTH_COLLECTION = "auth";
 
 
 export default {
