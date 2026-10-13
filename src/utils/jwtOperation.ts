@@ -1,6 +1,7 @@
 import env from "@/environment";
 import { IJwtRequest } from "@/interface/request/jwt.request";
 import jwt, { SignOptions } from "jsonwebtoken";
+import { randomUUID } from "crypto";
 
 // get access token
 export function generateAccessToken(user: IJwtRequest) {
@@ -9,10 +10,14 @@ export function generateAccessToken(user: IJwtRequest) {
     });
 }
 
-// get refresh token (signed with the dedicated refresh secret)
+// get refresh token (signed with the dedicated refresh secret).
+// Each token carries a unique jti: without it, two tokens minted in the same
+// second for the same user are byte-identical, which collides with the unique
+// session hash index and breaks rotation against the revoked copy.
 export function generateRefreshToken(user: IJwtRequest) {
     return jwt.sign({ user, type: "refresh" }, env.JWT_REFRESH_SECRET, {
-        expiresIn: env.JWT_REFRESH_EXPIRES_IN as SignOptions["expiresIn"]
+        expiresIn: env.JWT_REFRESH_EXPIRES_IN as SignOptions["expiresIn"],
+        jwtid: randomUUID(),
     });
 }
 

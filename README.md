@@ -133,7 +133,49 @@ Content-Type: application/json
 
 **Required configuration:** a Google OAuth **Web application** client ID in
 `GOOGLE_CLIENT_ID_WEB`, matching the `webClientId` the mobile app passes to
-`GoogleSignin.configure()`. No client secret and no callback URL are needed.
+`GoogleSignin.configure()`. No client secret is needed for native sign-in.
+
+#### Refresh token rotation
+Exchanges a still-valid refresh token for a new access/refresh pair. The old
+refresh token is revoked in the `auth` session collection (sha256-hashed,
+unique, 7-day TTL); reuse of a revoked token returns `401`.
+
+- **Endpoint**: `POST /v1/auth/refresh` (alias: `POST /api/v1/auth/refresh`)
+- Rate limited to 30 requests per 15 minutes per IP.
+
+**Request:**
+```http
+POST /v1/auth/refresh
+Content-Type: application/json
+
+{ "refreshToken": "<current_refresh_token>" }
+```
+
+**Example Response (Success):** same shape as `POST /v1/auth/google` —
+`accessToken`, `refreshToken` (new), `user`.
+
+**Errors:**
+
+| Status | Meaning |
+| ------ | ------- |
+| `400`  | Missing or malformed `refreshToken` |
+| `401`  | Unknown, revoked, expired, or wrong-type (access) token |
+| `429`  | Too many refresh attempts |
+
+#### Google OAuth 2.0 bridge (browser fallback for Expo Go)
+Used by the mobile app when the native Google SDK is unavailable (e.g. Expo Go).
+`GET /v1/auth/google/callback` parses the `id_token` query param from Google's
+implicit-flow redirect, validates the `state` param (must match a
+`sheild://oauth/callback` deep-link prefix), and injects the ID token into a
+minimal HTML bridge page that redirects to the app via the `sheild://` deep
+link. No server-side session is created here — the app receives the raw Google
+ID token and completes login via `POST /v1/auth/google` exactly as native
+sign-in does.
+
+**Required configuration:** register `https://<your-host>:<port>/v1/auth/google/callback`
+as an **Authorized redirect URI** in the Google Cloud Console OAuth client (Web
+application). In local development, tunnel or expose the backend and register
+the resulting HTTPS URL.
 
 ## Project Structure
 

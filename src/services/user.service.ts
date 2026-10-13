@@ -25,6 +25,13 @@ class UserService {
         return user;
     }
 
+    // get user by id
+    async getUserById(userId: string): Promise<IUserResponse | null> {
+        Log.info(`UserService:::getUserById:::: userId ${userId}`);
+        const user = await userModels.findOne({ _id: userId });
+        return user;
+    }
+
     // get user by email
     async getUserByEmail(email: string): Promise<IUserResponse | null> {
         Log.info(`UserService:::getUserByEmail:::: email ${email}`);

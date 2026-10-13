@@ -4,6 +4,7 @@ import { Log } from "@/utils/logger";
 import { AppError } from "@/error/AppError";
 import utils from "@/utils";
 import userService from "./user.service";
+import authSessionService from "./auth.session.service";
 import { IJwtRequest, IJwtResponse } from "@/interface/request/jwt.request";
 
 // One shared client; the audience list is fixed at first use.
@@ -107,6 +108,15 @@ class AuthService {
         const accessToken = utils.jwtOperation.generateAccessToken(jwtRequest);
         const refreshToken = utils.jwtOperation.generateRefreshToken(jwtRequest);
 
+        // Record the session in the `auth` collection so it can be rotated and
+        // revoked server-side.
+        await authSessionService.recordSession({
+            userId: user.id,
+            email: user.email,
+            googleId: user.googleId,
+            refreshToken,
+        });
+
         return {
             accessToken,
             refreshToken,
@@ -118,6 +128,70 @@ class AuthService {
                 role: user.role,
             },
         };
+    }
+
+    // Rotates a refresh session: the presented token must be a valid refresh
+    // JWT whose session is still recorded and unrevoked. The old session is
+    // revoked and a fresh token pair is issued and recorded.
+    async refreshSession(refreshToken: string): Promise<IJwtResponse> {
+        Log.info("AuthService:::refreshSession:::: rotating refresh token");
+
+        const claims = utils.jwtOperation.verifyRefreshToken(refreshToken);
+        if (!claims?.user?.userId) {
+            Log.warn("AuthService:::refreshSession:::: refresh token invalid, expired, or wrong type");
+            throw new AppError("Refresh token is invalid or expired", utils.http.HttpStatusCodes.UNAUTHORIZED);
+        }
+
+        const session = await authSessionService.findValidSessionByRefreshToken(refreshToken);
+        if (!session) {
+            // Unknown or revoked: a token that was never issued by this server
+            // (or was already rotated / logged out) must not mint new tokens.
+            Log.warn(`AuthService:::refreshSession:::: no active session for user ${claims.user.userId}`);
+            throw new AppError("Refresh token is invalid or expired", utils.http.HttpStatusCodes.UNAUTHORIZED);
+        }
+
+        const user = await userService.getUserById(claims.user.userId);
+        if (!user || user.isDeleted || !user.isActive) {
+            Log.warn(`AuthService:::refreshSession:::: user ${claims.user.userId} is missing, deleted, or disabled`);
+            throw new AppError("Refresh token is invalid or expired", utils.http.HttpStatusCodes.UNAUTHORIZED);
+        }
+
+        // Rotation: kill the old session before issuing the new pair.
+        await authSessionService.revokeByRefreshToken(refreshToken);
+
+        const jwtRequest: IJwtRequest = {
+            userId: user.id,
+            email: user.email,
+            role: user.role,
+        };
+        const accessToken = utils.jwtOperation.generateAccessToken(jwtRequest);
+        const newRefreshToken = utils.jwtOperation.generateRefreshToken(jwtRequest);
+
+        await authSessionService.recordSession({
+            userId: user.id,
+            email: user.email,
+            googleId: user.googleId,
+            refreshToken: newRefreshToken,
+        });
+
+        Log.info(`AuthService:::refreshSession:::: tokens rotated for user ${user.id}`);
+
+        return {
+            accessToken,
+            refreshToken: newRefreshToken,
+            user: {
+                id: user.id,
+                email: user.email,
+                name: user.userName,
+                avatarUrl: user.avatarUrl,
+                role: user.role,
+            },
+        };
+    }
+
+    // Revokes the session behind a refresh token (used by logout).
+    async revokeSession(refreshToken: string): Promise<void> {
+        await authSessionService.revokeByRefreshToken(refreshToken);
     }
 
     async logout() {

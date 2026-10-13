@@ -19,7 +19,10 @@ Replaced the Appwrite-based auth stack with direct Google ID-token verification.
 | 5 | `POST /v1/auth/google` (+ `/api/v1` mount alias, + legacy `/google/native`): verify → upsert (googleId → email link → create) → JWTs + user | ✅ |
 | 6 | Remove Appwrite service, OAuth browser flows (`googleLogin`, `oauth/callback`, `oauth/exchange`, `jwtVerify`) | ✅ |
 | 7 | Contract tests: fake idToken → **401**, malformed → **400**, both `/v1` and `/api/v1` prefixes OK | ✅ |
-| 8 | Follow-up (not in this branch): `POST /v1/auth/refresh` + rotation, then shorten `JWT_EXPIRES_IN` | ⬜ |
+| 8 | `POST /v1/auth/refresh` + rotation: `IAuthSession` in `auth` collection (sha256 hash, unique, TTL 7d), old session revoked, new pair issued | ✅ |
+| 9 | `GET /v1/auth/google/callback`: OAuth 2.0 bridge page — parses `id_token`, validates `state`, injects into `sheild://oauth/callback` deep link | ✅ |
+| 10 | Refresh JWTs carry `jwtid: randomUUID()` — same-second tokens no longer byte-identical, avoiding unique-hash index collision during rotation | ✅ |
+| 11 | Dropped stale `appwriteId_1` unique index from `users` (blocked legacy-user upserts where `appwriteId` is null) | ✅ |
 
 ---
 
