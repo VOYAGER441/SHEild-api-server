@@ -66,10 +66,20 @@ router.post("/google/native", googleSignInLimiter, apiErrorHandler(AuthControlle
  * @openapi
  * /auth/google/callback
  * browser-flow bridge: Google redirects here with the id_token in the URL
- * fragment; the page forwards it into the app via the allow-listed deep link
- * carried in `state`. Used by the Expo Go / browser fallback.
+ * fragment; the page hands the result to the backend (browser-session) and
+ * shows a "return to the app" message. Used by the Expo Go / browser fallback.
  */
 router.get("/google/callback", apiErrorHandler(AuthController.googleOAuthCallback));
+
+/**
+ * @openapi
+ * /auth/google/browser-session/:sessionId
+ * POST: bridge page stores the Google result; GET: app polls for it.
+ * Lets the browser flow work in Expo Go, where sheild:// deep links are
+ * not registered.
+ */
+router.post("/google/browser-session/:sessionId", apiErrorHandler(AuthController.saveBrowserSession));
+router.get("/google/browser-session/:sessionId", apiErrorHandler(AuthController.getBrowserSession));
 
 /**
  * @openapi

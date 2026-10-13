@@ -23,6 +23,7 @@ Replaced the Appwrite-based auth stack with direct Google ID-token verification.
 | 9 | `GET /v1/auth/google/callback`: OAuth 2.0 bridge page — parses `id_token`, validates `state`, injects into `sheild://oauth/callback` deep link | ✅ |
 | 10 | Refresh JWTs carry `jwtid: randomUUID()` — same-second tokens no longer byte-identical, avoiding unique-hash index collision during rotation | ✅ |
 | 11 | Dropped stale `appwriteId_1` unique index from `users` (blocked legacy-user upserts where `appwriteId` is null) | ✅ |
+| 12 | Browser flow handoff via `POST/GET /v1/auth/google/browser-session/:sessionId` (bridge page posts result, app polls) — works in Expo Go where `sheild://` deep links are not registered | ✅ |
 
 ---
 

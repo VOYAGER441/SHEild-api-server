@@ -19,7 +19,7 @@ export interface IAuthSession {
 
 const authSessionSchema = new mongoose.Schema(
     {
-        userId: { type: mongoose.Schema.Types.ObjectId, ref: "users", required: true, index: true },
+        userId: { type: mongoose.Schema.Types.ObjectId, ref: collections.USER_COLLECTION, required: true, index: true },
         email: { type: String, required: true, lowercase: true, trim: true },
         googleId: { type: String },
         // sha256 hex of the refresh JWT
@@ -30,9 +30,7 @@ const authSessionSchema = new mongoose.Schema(
         updatedAt: { type: Date, default: Date.now },
     },
     {
-        // pin the exact collection name - mongoose would otherwise pluralize
-        // the model name to "auths"
-        collection: "auth",
+        versionKey: false,
     }
 );
 

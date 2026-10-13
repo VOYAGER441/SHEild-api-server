@@ -164,18 +164,21 @@ Content-Type: application/json
 
 #### Google OAuth 2.0 bridge (browser fallback for Expo Go)
 Used by the mobile app when the native Google SDK is unavailable (e.g. Expo Go).
-`GET /v1/auth/google/callback` parses the `id_token` query param from Google's
-implicit-flow redirect, validates the `state` param (must match a
-`sheild://oauth/callback` deep-link prefix), and injects the ID token into a
-minimal HTML bridge page that redirects to the app via the `sheild://` deep
-link. No server-side session is created here — the app receives the raw Google
-ID token and completes login via `POST /v1/auth/google` exactly as native
-sign-in does.
+`GET /v1/auth/google/callback` is the Google redirect target. Its JS reads the
+`id_token` from the URL fragment (fragments are never sent to servers) and
+hands it to the backend via `POST /v1/auth/google/browser-session/:sessionId`
+(the `state` param carries the app-generated sessionId). The app polls
+`GET /v1/auth/google/browser-session/:sessionId` until the token appears
+(one-time read, 5-minute TTL), then completes login via `POST /v1/auth/google`
+exactly as native sign-in does. No `sheild://` deep link is required, so the
+flow works in Expo Go (where custom schemes are not registered). The page also
+shows a best-effort deep-link button for dev/standalone builds.
 
 **Required configuration:** register `https://<your-host>:<port>/v1/auth/google/callback`
-as an **Authorized redirect URI** in the Google Cloud Console OAuth client (Web
-application). In local development, tunnel or expose the backend and register
-the resulting HTTPS URL.
+as an **Authorised redirect URI** in the Google Cloud Console OAuth client (Web
+application). In local development, tunnel or expose the backend (e.g. ngrok)
+and register the resulting HTTPS URL — and remember it changes when ngrok
+restarts.
 
 ## Project Structure
 
