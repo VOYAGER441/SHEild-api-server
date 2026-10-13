@@ -41,8 +41,15 @@ class UserService {
 
     // attach a google id to an existing user (e.g. matched by email on first native sign-in)
     async linkGoogleId(userId: string, googleId: string): Promise<void> {
-        Log.info(`UserService:::linkGoogleId:::: linking googleId ${googleId} to user ${userId}`);
+        Log.info(`UserService:::linkGoogleId:::: linking googleId to user ${userId}`);
         await userModels.update(userId, { googleId, updatedAt: new Date() });
+    }
+
+    // set the user's self-selected role (women / parent / child / alzheimer_patient)
+    async updateUserRole(userId: string, role: string): Promise<IUserResponse | null> {
+        Log.info(`UserService:::updateUserRole:::: user ${userId} -> role ${role}`);
+        await userModels.update(userId, { role, updatedAt: new Date() });
+        return this.getUserById(userId);
     }
 
     // create user

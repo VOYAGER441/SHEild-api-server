@@ -10,6 +10,10 @@ export enum NODE_ENVS {
 export enum USER_ROLE {
    ADMIN = "admin",
    USER = "user",
+   WOMEN = "women",
+   PARENT = "parent",
+   CHILD = "child",
+   ALZHEIMER_PATIENT  = "alzheimer_patient",
 }
 
 

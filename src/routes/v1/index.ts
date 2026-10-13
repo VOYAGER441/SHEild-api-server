@@ -1,6 +1,7 @@
 import express from "express";
 import ChatRouter from "./chat.route";
 import AuthRouter from "./auth.routes";
+import UserRouter from "./user.routes";
 
 
 const router= express.Router();
@@ -38,6 +39,14 @@ router.use("/auth", AuthRouter);
 
 // user routes
 // ###############################################
+/**
+ * user endpoints - protected access (Bearer access token)
+ * @swagger
+ * tags:
+ *   name: User
+ *   description: User profile operations
+ */
+router.use("/user", UserRouter);
 
 
 export default router;
